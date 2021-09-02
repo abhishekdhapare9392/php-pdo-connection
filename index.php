@@ -8,7 +8,7 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "<script>alert('Connection Successfully!')</script>";
+    // echo "<script>alert('Connection Successfully!')</script>";
 
     $sql = "SELECT * FROM users";
     $stmt = $conn->prepare($sql);
@@ -17,6 +17,26 @@ try {
     // echo json_encode($result);
 } catch (PDOException $e) {
     // echo "Connection failed: " . $e->getMessage();
+}
+
+if(isset($_POST['submit'])){
+    
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $message = $_POST['message'];
+    if(empty($name) || empty($email) || empty($phone) || empty($message)){
+        echo "<script>alert('Please fill all the fields!')</script>";
+    } else {
+        $sql = "INSERT INTO users (user_name, email, phone, message) VALUES ('$name', '$email', '$phone', '$message')";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        echo "<script>alert('Data Inserted Successfully!')</script>";
+        $sql = "SELECT * FROM users";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+    }
 }
 
 ?>
@@ -38,7 +58,31 @@ try {
     <section class="section">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <h1 class="text-center">Get Data</h1>
+                    <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
+                        <div class="form-group">
+                            <label for="">Name</label>
+                            <input type="text" name="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Phone</label>
+                            <input type="text" name="phone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Message</label>
+                            <textarea name="message" id="" rows="5" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group py-3">
+                            <input type="submit" value="Submit" class="btn btn-primary" name="submit">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
